@@ -344,8 +344,8 @@ ghost[0].direction=LEFT;ghost[1].direction=LEFT;ghost[2].direction=LEFT;ghost[3]
     movePlayer(&player, 1, 2,&s1,map,&check);
     moveGhost(&ghost[0], Mx, My,&s1,map,&check);
     moveGhost(&ghost[1], Mx, My-1,&s1,map,&check);
-    moveGhost(&ghost[2], Mx, My+1,&s1,map,&check);
-    moveGhost(&ghost[3], Mx, My+2,&s1,map,&check);
+    moveGhost(&ghost[2], Mx, My+2,&s1,map,&check);
+    moveGhost(&ghost[3], Mx, My+1,&s1,map,&check);
     while (s1.energy>0&&s1.score<MAX)
     {
         system("cls");
@@ -406,8 +406,8 @@ ghost[0].direction=LEFT;ghost[1].direction=LEFT;ghost[2].direction=LEFT;ghost[3]
     movePlayer(&player, 1, 2,&s1,map,&check);
     moveGhost(&ghost[0], Mx, My,&s1,map,&check);
     moveGhost(&ghost[1], Mx, My-1,&s1,map,&check);
-    moveGhost(&ghost[2], Mx, My+1,&s1,map,&check);
-    moveGhost(&ghost[3], Mx, My+2,&s1,map,&check);
+    moveGhost(&ghost[2], Mx, My+2,&s1,map,&check);
+    moveGhost(&ghost[3], Mx, My+1,&s1,map,&check);
             delay(MoveSpeed);
 		}
         int inx=0;
@@ -436,8 +436,8 @@ ghost[0].direction=LEFT;ghost[1].direction=LEFT;ghost[2].direction=LEFT;ghost[3]
     movePlayer(&player, 1, 2,&s1,map,&check);
     moveGhost(&ghost[0], Mx, My,&s1,map,&check);
     moveGhost(&ghost[1], Mx, My-1,&s1,map,&check);
-    moveGhost(&ghost[2], Mx, My+1,&s1,map,&check);
-    moveGhost(&ghost[3], Mx, My+2,&s1,map,&check);
+    moveGhost(&ghost[2], Mx, My+2,&s1,map,&check);
+    moveGhost(&ghost[3], Mx, My+1,&s1,map,&check);
             delay(MoveSpeed);
 		}
         }
