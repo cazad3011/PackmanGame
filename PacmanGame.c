@@ -33,7 +33,8 @@ struct Ghost
 {
     int x, y, direction;
     char c;
-    int inx;  
+    int inx;
+    char name;
 }ghost[4];
 
 struct Score{
@@ -54,7 +55,6 @@ struct Status{
 }status[BOARDx-1][BOARDy-1];
 const char EMPTY = ' ';
 const char PLAYER = '@';
-const char GHOST = 'G';
 const char DOT ='.';
 const char BIG_DOT ='o';
 const char WALL = '#';
@@ -151,7 +151,7 @@ int moveGhost(struct Ghost *ghost, int x, int y,struct Score *s1,char**map,int *
     }
     ghost->c=ch;
     ghost->x = x; ghost->y = y;
-    map[ghost->x][ghost->y] = GHOST;
+    map[ghost->x][ghost->y] = ghost->name;
     return true;
 }
 int min_path(int ux,int uy,int px,int py,char **map){
@@ -448,6 +448,7 @@ char **map1 = (char**) malloc((BOARDx)*sizeof(char*));
        ghost[0].y=-1;ghost[1].y=-1;ghost[2].y=-1;ghost[3].y=-1;
 ghost[0].direction=UP;ghost[1].direction=LEFT;ghost[2].direction=RIGHT;ghost[3].direction=DOWN;
       ghost[0].inx=0;ghost[1].inx=1;ghost[2].inx=2;ghost[3].inx=3;
+      ghost[0].name='P'; ghost[1].name='B'; ghost[2].name='I'; ghost[3].name='C';
 	  int direction = RIGHT;
       s1.energy=10;s1.score=0;
     movePlayer(&player, 1, 2,&s1,map,&check);
