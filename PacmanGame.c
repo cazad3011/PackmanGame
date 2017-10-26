@@ -55,6 +55,10 @@ struct Status{
 }status[BOARDx-1][BOARDy-1];
 const char EMPTY = ' ';
 const char PLAYER = '@';
+const char GHOST0= 'P';
+const char GHOST1= 'B';
+const char GHOST2= 'I';
+const char GHOST3= 'C'; 
 const char DOT ='.';
 const char BIG_DOT ='o';
 const char WALL = '#';
@@ -96,7 +100,7 @@ int movePlayer(struct Player *player, int x, int y,struct Score *s1,char**map,
     char ch = map[x][y];
   if(ch !=EMPTY&&ch!=DOT&&ch!=BIG_DOT)
     {  
-	    if(ch==GHOST){
+	    if(ch==GHOST0||ch==GHOST1||ch==GHOST2||ch==GHOST3){
 		s1->energy-=1;
 		*check=1;
 	    }  
