@@ -40,7 +40,18 @@ struct Score{
 	int score;
 	int energy;
 }s1;
-
+struct Cell{
+	int x;
+	int y;
+	int f;
+	int g;
+	int h;
+}cell[(BOARDx-1)*(BOARDy-1)];
+struct Status{
+	int open;
+	int closed;
+	int cell_inx;
+}status[BOARDx-1][BOARDy-1];
 const char EMPTY = ' ';
 const char PLAYER = '@';
 const char GHOST = 'G';
@@ -64,6 +75,15 @@ int minimum(int a,int b,int c,int d){
 	else if(d<=a&&d<=b&&d<=c)
 	r=d;
 	return r;  
+}
+
+int gcost(int travelled_path){
+	return travelled_path;
+}
+int hcost(int x,int y,int px,int py,char** map){
+	if(map[x][y]==WALL||map[px][py]==WALL)
+	 return infinity;
+     return abs(px-x) + abs(py-y);
 }
 
 int movePlayer(struct Player *player, int x, int y,struct Score *s1,char**map,
@@ -134,69 +154,154 @@ int moveGhost(struct Ghost *ghost, int x, int y,struct Score *s1,char**map,int *
     map[ghost->x][ghost->y] = GHOST;
     return true;
 }
-void find_all_path(int ux,int uy,int px,int py,
-                int **visited,
-				int *path_index,
-				char **map,int *min_path)
-{
-	int i,j;
-	visited[ux][uy] = true; 
-    (*path_index)++;	
-    if (ux==px&&uy==py)
-    {
-            
-         if((*path_index-1)<*min_path)
-		 {
-          *min_path=*path_index-1;
-         }  
-            
-    }  
-    else 
-    {
-        int a=infinity,b=infinity,c=infinity,d=infinity;
-        if(isValidPos(ux-1,uy)&&visited[ux-1][uy]!=true&&map[ux-1][uy]!=WALL)
-        a=abs(ux-1-px)+abs(uy-py);
-        if(isValidPos(ux,uy-1)&&visited[ux][uy-1]!=true&&map[ux][uy-1]!=WALL)
-        b=abs(ux-px)+abs(uy-1-py);
-        if(isValidPos(ux+1,uy)&&visited[ux+1][uy]!=true&&map[ux+1][uy]!=WALL)
-        c=abs(ux+1-px)+abs(uy-py);
-        if(isValidPos(ux,uy+1)&&visited[ux][uy+1]!=true&&map[ux][uy+1]!=WALL)
-        d=abs(ux-px)+abs(uy+1-py);
-        int m= minimum(a,b,c,d);
-	    if(m==a&&isValidPos(ux-1,uy)&&visited[ux-1][uy]!=true&&map[ux-1][uy]!=WALL)
-		  find_all_path(ux-1, uy,px,py,visited, path_index,map,min_path);	
-	   else if(m==b&&isValidPos(ux,uy-1)&&visited[ux][uy-1]!=true&&map[ux][uy-1]!=WALL)
-		  find_all_path(ux, uy-1,px,py,visited, path_index,map,min_path);
-	   else	if(m==c&&isValidPos(ux+1,uy)&&visited[ux+1][uy]!=true&&map[ux+1][uy]!=WALL)
-		  find_all_path(ux+1, uy,px,py,visited, path_index,map,min_path);
-	   else if(m==d&&isValidPos(ux,uy+1)&&visited[ux][uy+1]!=true&&map[ux][uy+1]!=WALL)	  
-	   find_all_path(ux, uy+1,px,py,visited, path_index,map,min_path);	
-	} 
-}
-void init_dfs(int gx,int gy,int px, int py,
-       char **map,int *min_path){
-	int i =0,j=0; 
-     int **visited = (int**) malloc((BOARDx)*sizeof(int*));
-     for (i =0 ; i < BOARDx; i++)
-     visited[i] = malloc((BOARDy) * sizeof(int)); 
-        int path_index = 0; 
-    for (i = 0; i < BOARDx; i++)
-       for(j=0;j<BOARDy;j++)
-        visited[i][j] = false;
-    find_all_path(gx, gy,px,py,visited, &path_index,map,min_path);
-   for(i=0;i<BOARDx;i++)
-    	    free(visited[i]);    
-    	    free(visited);                              
-} /* initial_dfs() */
-int minimum_path(int gx,int gy,int px, int py,
-       char **map)
-{
-int min_path=infinity;  
-init_dfs(gx,gy,px,py,map,&min_path);
-/*printf("min path= %d",min_path);*/
-return min_path;
-}
+int min_path(int ux,int uy,int px,int py,char **map){
 
+     if(ux==px&&uy==py)
+     return 0;
+	int i =0,j=0,min_path=infinity; 
+		int cell_inx=-1; 
+		for(i=0;i<BOARDx-1;i++)
+		for(j=0;j<BOARDy-1;j++)
+		{
+			status[i][j].open=false;
+			status[i][j].closed=false;
+			status[i][j].cell_inx=-1;
+		}
+	    cell_inx++;
+	    status[ux][uy].open=true;
+	    status[ux][uy].cell_inx=cell_inx;
+        cell[cell_inx].x=ux;
+        cell[cell_inx].y=uy;
+        cell[cell_inx].g=gcost(0);
+        cell[cell_inx].h=hcost(ux,uy,px,py,map);
+        cell[cell_inx].f=cell[cell_inx].g+cell[cell_inx].h;
+        int cur_node_inx=cell_inx,m_fcost=infinity;
+        int flag=1;
+      while(flag){
+      	for(i=1;i<=cell_inx;i++){
+      		if(status[cell[i].x][cell[i].y].open==true){
+      		int cur_f=cell[i].f;
+      		if(cur_f<m_fcost){
+      			m_fcost=cur_f;
+      			cur_node_inx=i;
+			  }
+		  }
+     	}
+     	int X=cell[cur_node_inx].x,Y=cell[cur_node_inx].y;
+		  status[X][Y].open=false;
+		  status[X][Y].closed=true;
+		if(X==px&&Y==py){
+		  	return m_fcost;
+		  }
+		else{
+		  	flag=0;
+		 if(isValidPos(X-1,Y)&&status[X-1][Y].closed!=true&&map[X-1][Y]!=WALL){
+		 	
+			 if(status[X-1][Y].cell_inx!=-1){
+			 int g=gcost(cell[cur_node_inx].g+1);
+			 int h=hcost(X-1,Y,px,py,map);
+			 int f=g+h;
+          if(cell[status[X-1][Y].cell_inx].f>f)  {
+          	    flag=1;
+          	    cell[status[X-1][Y].cell_inx].g=g;
+          	    cell[status[X-1][Y].cell_inx].h=h;
+		 		cell[status[X-1][Y].cell_inx].f=f;
+			 }
+			 }
+		    else if(status[X-1][Y].open==false){
+		    	flag=1;
+			 	cell_inx++;
+	       status[X-1][Y].open=true;
+	       status[X-1][Y].cell_inx=cell_inx;
+           cell[cell_inx].x=X-1;
+           cell[cell_inx].y=Y;
+           cell[cell_inx].g=gcost(cell[cur_node_inx].g+1);
+           cell[cell_inx].h=hcost(X-1,Y,px,py,map);
+           cell[cell_inx].f=cell[cell_inx].g+cell[cell_inx].h;
+			 	
+			 }
+		 }
+		  if(isValidPos(X+1,Y)&&status[X+1][Y].closed!=true&&map[X+1][Y]!=WALL){
+		  
+		 	if(status[X+1][Y].cell_inx!=-1){
+			 int g=gcost(cell[cur_node_inx].g+1);
+			 int h=hcost(X+1,Y,px,py,map);
+			 int f=g+h;
+          if(cell[status[X+1][Y].cell_inx].f>f)  {
+          	flag=1;
+          	    cell[status[X+1][Y].cell_inx].g=g;
+          	    cell[status[X+1][Y].cell_inx].h=h;
+		 		cell[status[X+1][Y].cell_inx].f=f;
+			 }
+			 }
+		    else if(status[X+1][Y].open==false){
+		    	flag=1;
+			 	cell_inx++;
+	       status[X+1][Y].open=true;
+	       status[X+1][Y].cell_inx=cell_inx;
+           cell[cell_inx].x=X+1;
+           cell[cell_inx].y=Y;
+           cell[cell_inx].g=gcost(cell[cur_node_inx].g+1);
+           cell[cell_inx].h=hcost(X+1,Y,px,py,map);
+           cell[cell_inx].f=cell[cell_inx].g+cell[cell_inx].h;
+			 	
+			 }
+		 }
+		  if(isValidPos(X,Y-1)&&status[X][Y-1].closed!=true&&map[X][Y-1]!=WALL){
+			 if(status[X][Y-1].cell_inx!=-1){
+			 int g=gcost(cell[cur_node_inx].g+1);
+			 int h=hcost(X,Y-1,px,py,map);
+			 int f=g+h;
+          if(cell[status[X][Y-1].cell_inx].f>f)  {
+          	flag=1;
+          	    cell[status[X][Y-1].cell_inx].g=g;
+          	    cell[status[X][Y-1].cell_inx].h=h;
+		 		cell[status[X][Y-1].cell_inx].f=f;
+			 }
+			 }
+		    else if(status[X][Y-1].open==false){
+		    	flag=1;
+			 	cell_inx++;
+	       status[X][Y-1].open=true;
+	       status[X][Y-1].cell_inx=cell_inx;
+           cell[cell_inx].x=X;
+           cell[cell_inx].y=Y-1;
+           cell[cell_inx].g=gcost(cell[cur_node_inx].g+1);
+           cell[cell_inx].h=hcost(X,Y-1,px,py,map);
+           cell[cell_inx].f=cell[cell_inx].g+cell[cell_inx].h;
+			 	
+			 }
+		 }
+		 if(isValidPos(X,Y+1)&&status[X][Y+1].closed!=true&&map[X][Y+1]!=WALL){
+		 	if(status[X][Y+1].cell_inx!=-1){
+			 int g=gcost(cell[cur_node_inx].g+1);
+			 int h=hcost(X,Y+1,px,py,map);
+			 int f=g+h;
+          if(cell[status[X][Y+1].cell_inx].f>f)  {
+          	flag=1;
+		 		cell[status[X][Y+1].cell_inx].g=g;
+				cell[status[X][Y+1].cell_inx].h=h;
+				cell[status[X][Y+1].cell_inx].f=f;
+			 }
+			 }
+		    else if(status[X][Y+1].open==false){
+		    	flag=1;
+			 	cell_inx++;
+	       status[X][Y+1].open=true;
+	       status[X][Y+1].cell_inx=cell_inx;
+           cell[cell_inx].x=X;
+           cell[cell_inx].y=Y+1;
+           cell[cell_inx].g=gcost(cell[cur_node_inx].g+1);
+           cell[cell_inx].h=hcost(X,Y+1,px,py,map);
+           cell[cell_inx].f=cell[cell_inx].g+cell[cell_inx].h;
+			 	
+			 }
+		 }
+		  }
+	  }  
+   return m_fcost;     
+          
+}
 void GhostLogic(struct Ghost *ghost, struct Player *player,char**map)
 {
 	int i=0,a=infinity,b=infinity,c=infinity,d=infinity;
@@ -214,40 +319,40 @@ void GhostLogic(struct Ghost *ghost, struct Player *player,char**map)
 	  return; 
    }
    else if(ghost->inx==3){
-	   a=rand()%4;
+	   a=(rand()*rand())%4;
 	   if(a==RIGHT&&ghost->direction!=LEFT)
 	   	ghost->direction=RIGHT;
 	    else if(a==DOWN&&ghost->direction!=UP)
 	   	ghost->direction=DOWN;
 	   	else if(a==UP&&ghost->direction!=DOWN)
 	   	ghost->direction=UP;
-	   	else if(a==LEFT&&ghost->direction!=RIGHT)
+	   	else if(ghost->direction!=RIGHT)
 	   	ghost->direction=LEFT;
 	   	return;
    }
    else if(ghost->inx==1){
    	if(isValidPos(ghost->x-1,ghost->y)&&map[ghost->x-1][ghost->y]!=WALL
 	      &&ghost->direction!=DOWN)
-   	a=minimum_path(ghost->x-1,ghost->y,player->x,player->y,map);
+   	a=min_path(ghost->x-1,ghost->y,player->x,player->y,map);
    	if(isValidPos(ghost->x,ghost->y-1)&&map[ghost->x][ghost->y-1]!=WALL
 	               &&ghost->direction!=RIGHT)
-    b=minimum_path(ghost->x,ghost->y-1,player->x,player->y,map);
+    b=min_path(ghost->x,ghost->y-1,player->x,player->y,map);
     if(isValidPos(ghost->x+1,ghost->y)&&map[ghost->x+1][ghost->y]!=WALL
 	                &&ghost->direction!=UP)
-   	c=minimum_path(ghost->x+1,ghost->y,player->x,player->y,map); 
+   	c=min_path(ghost->x+1,ghost->y,player->x,player->y,map); 
    	if(isValidPos(ghost->x,ghost->y+1)&&map[ghost->x][ghost->y+1]!=WALL
 	              &&ghost->direction!=LEFT)
-   	d=minimum_path(ghost->x,ghost->y+1,player->x,player->y,map); 
+   	d=min_path(ghost->x,ghost->y+1,player->x,player->y,map); 
    }
   else if(ghost->inx==2){
    	if(isValidPos(ghost->x-1,ghost->y)&&map[ghost->x-1][ghost->y]!=WALL)
-   	a=abs(ghost->x-1-player->x)+abs(ghost->y-player->y); /*UP*/
+   	a=abs(ghost->x-1-player->x)+abs(ghost->y-player->y); 
    	if(isValidPos(ghost->x,ghost->y-1)&&map[ghost->x][ghost->y-1]!=WALL)
-   	b=abs(ghost->x-player->x)+abs(ghost->y-1-player->y);  /*LEFT*/
+   	b=abs(ghost->x-player->x)+abs(ghost->y-1-player->y);  
    	if(isValidPos(ghost->x+1,ghost->y)&&map[ghost->x+1][ghost->y]!=WALL)
-   	c=abs(ghost->x+1-player->x)+abs(ghost->y-player->y);  /*DOWN*/
+   	c=abs(ghost->x+1-player->x)+abs(ghost->y-player->y);  
    	if(isValidPos(ghost->x,ghost->y+1)&&map[ghost->x][ghost->y+1]!=WALL)
-   	d=abs(ghost->x-player->x)+abs(ghost->y+1-player->y);  /* RIGHT*/
+   	d=abs(ghost->x-player->x)+abs(ghost->y+1-player->y);  
    }
    int m=minimum(a,b,c,d);
    	if(m==a&& ghost->direction != DOWN){
@@ -408,7 +513,7 @@ ghost[0].direction=LEFT;ghost[1].direction=LEFT;ghost[2].direction=LEFT;ghost[3]
     moveGhost(&ghost[1], Mx, My-1,&s1,map,&check);
     moveGhost(&ghost[2], Mx, My+2,&s1,map,&check);
     moveGhost(&ghost[3], Mx, My+1,&s1,map,&check);
-            delay(MoveSpeed);
+            delay(MoveSpeed+100);
 		}
         int inx=0;
         for ( inx = 0; inx < 4; inx++)
@@ -438,7 +543,7 @@ ghost[0].direction=LEFT;ghost[1].direction=LEFT;ghost[2].direction=LEFT;ghost[3]
     moveGhost(&ghost[1], Mx, My-1,&s1,map,&check);
     moveGhost(&ghost[2], Mx, My+2,&s1,map,&check);
     moveGhost(&ghost[3], Mx, My+1,&s1,map,&check);
-            delay(MoveSpeed);
+            delay(MoveSpeed+100);
 		}
         }
         delay(MoveSpeed);
@@ -467,4 +572,3 @@ srand((unsigned int)time(NULL));
     running_game();
     return 0;
 }
-
