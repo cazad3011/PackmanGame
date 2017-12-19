@@ -20,7 +20,7 @@ Use the basic commands of windows or linux operating system for compiling and ru
 At first compile PackmanGame.c and then run it. 
 When PackmanGame.c runs, it displays a game board with one player and four ghosts on the console. A sample of running game board is shown below:
 
-![Console Image](http://imagehost7.online-image-editor.com/oie_upload/images/OIE_2015_8408839_20622134/2581735EjHnCwMW.png)
+![Console Image](https://photos.google.com/album/AF1QipMJnzAqCjQ770I3iVR4mN7uTFtOpva8_C_O5e_f/photo/AF1QipPM4l3MQ37ctBRLJRiiYKqT09aotv6BURjR1yl0)
 
 This package is available on an "as is" basis. I do not say or imply that it will be useful for 
 whatever you want to do with it. It may also contain bugs, and I assume no responsibility for 
