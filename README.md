@@ -1,10 +1,5 @@
 **@ Author: CHANDRASHEKHAR AZAD**
 
-## ABOUT ME
-
-I am Chandrashekhar Azad, a final year B.Tech Computer Science and Engineering student at BCE Bhagalpur with interest 
-in Graph Theory, Algorithms, Data Structures, DBMS, Programming and Complexity Theory.
-
 ## PackmanGame
 
 This is a console based Packman game which has been designed in C programming language using manhattan distance and A star algorithms.
