@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <malloc.h>
-#include <windows.h> /*for windows environment*/
+/*#include <windows.h> */ /*for windows environment*/
 #include <time.h>
 #include <conio.h>
 #define true 1
@@ -450,7 +450,7 @@ char **map1 = (char**) malloc((BOARDx)*sizeof(char*));
        player.y=-1;
        ghost[0].x=-1;ghost[1].x=-1;ghost[2].x=-1;ghost[3].x=-1;
        ghost[0].y=-1;ghost[1].y=-1;ghost[2].y=-1;ghost[3].y=-1;
-ghost[0].direction=UP;ghost[1].direction=LEFT;ghost[2].direction=RIGHT;ghost[3].direction=DOWN;
+      ghost[0].direction=UP;ghost[1].direction=LEFT;ghost[2].direction=RIGHT;ghost[3].direction=DOWN;
       ghost[0].inx=0;ghost[1].inx=1;ghost[2].inx=2;ghost[3].inx=3;
       ghost[0].name='P'; ghost[1].name='B'; ghost[2].name='I'; ghost[3].name='C';
 	  int direction = RIGHT;
@@ -467,9 +467,9 @@ ghost[0].direction=UP;ghost[1].direction=LEFT;ghost[2].direction=RIGHT;ghost[3].
         /*show_current_position(&player);*/
         showScoreEnergy(&s1);
        
-        if (GetAsyncKeyState(VK_UP)) /*taking arrow keys input
+    /*    if (GetAsyncKeyState(VK_UP)) */ /*taking arrow keys input
 	                                   for moving player in windows environment*/
-        {
+       /* {
             direction = UP;
         }
         else if (GetAsyncKeyState(VK_DOWN))
@@ -483,9 +483,9 @@ ghost[0].direction=UP;ghost[1].direction=LEFT;ghost[2].direction=RIGHT;ghost[3].
         else if (GetAsyncKeyState(VK_RIGHT))
         {
             direction = RIGHT;
-        }
-    /*switch ( get_code() ) { /*for taking arrow keys input for moving player*/
-    /*case ARROW_UP:
+        } */
+    switch ( get_code() ) {   /*for taking arrow keys input for moving player in Linux environment*/
+    case ARROW_UP:
       direction=UP;
       break;
     case ARROW_DOWN:
@@ -497,7 +497,7 @@ ghost[0].direction=UP;ghost[1].direction=LEFT;ghost[2].direction=RIGHT;ghost[3].
     case ARROW_RIGHT:
       direction=RIGHT;
       break;
-    }*/
+    }
         switch (direction)
         {
         case UP:
