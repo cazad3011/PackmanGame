@@ -1,4 +1,3 @@
-**@ Author: CHANDRASHEKHAR AZAD**
 
 ## PackmanGame
 
@@ -22,10 +21,4 @@ whatever you want to do with it. It may also contain bugs, and I assume no respo
 any potential problems associated with its use. However,I have tried to fix almost bugs of my 
 program. It has been tested on an Intel(R) Core(TM) CPU (i5) with a 2.20 GHz processor and 8.00 GB of RAM, running on the Windows 10 operating system.
 
-**Email id: <cazad3011@gmail.com>**
-
-**Mobile No: (+91) 7319654847**
-
-**@Author: CHANDRASHEKHAR AZAD**
-
-END OF FILE
+**Email id: <cazad3011@gmail.com>*
